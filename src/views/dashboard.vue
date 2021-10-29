@@ -37,26 +37,26 @@
             <div class="caption primary--text pa-1 font-weight-bold">Due date</div>
             <div class="black--text">{{ project.due }}</div>
           </v-flex>
-          <v-flex xs2 sm4 md2 class="primary--text">
+          <v-flex xs2 sm4 md1 class="primary--text">
               <div>
                 <v-chip small :class="`${project.status} dark--text caption mt-4 px-3 mr-5`">
                     {{project.status}}
                 </v-chip>
               </div>
           </v-flex>
-          <v-flex xs6 sm4 md2 class="primary--text">
+          <v-flex xs6 sm4 md3 class="primary--text">
             <div class="caption primary--text pa-1 font-weight-bold">
-              <v-tooltip top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon v-bind="attrs" v-on="on" left @click="deleteProject(project.id)">mdi-delete</v-icon>
-                </template>
-                <span>delete project</span>
-              </v-tooltip>
-              
+                <button @click="deleteProject(project.id)" class="deleteProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default">
+                  <v-icon left>mdi-delete</v-icon>
+                  delete
+                </button>
               <!-- dialog -->
                   <v-dialog width="500" v-model="dialog" >
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn text outlined class="grey" dark v-bind="attrs" v-on="on" >create new project</v-btn>
+                      <v-btn v-bind="attrs" v-on="on" text outlined class="grey modifyProject" dark @click="modifyProject(project.id)">
+                              <v-icon left>mdi-pencil</v-icon>
+                        edit
+                      </v-btn>
                     </template>
                     <v-card>
                       <v-card-title class="text-h5 text-uppercase grey lighten-2">
@@ -90,12 +90,6 @@
                   </v-dialog>
               <!-- dialog -->
               
-              <v-tooltip top>
-                <template v-slot:activator="{ on, attrs }">
-                    <v-icon v-bind="attrs" v-on="on" left @click="modifyProject(project.id)">mdi-pencil</v-icon>
-                </template>
-                <span>edit project</span>
-              </v-tooltip>
             </div>
           </v-flex>
         </v-layout>
@@ -158,19 +152,6 @@ export default {
         }
       });
     });
-
-
-// next issues ===> 1- duplication of modify
-             
-
-
-      // const Query = query(collection(db, "Projects"));
-      // const querySnapshot = await getDocs(Query);
-      // querySnapshot.forEach((doc) => {
-      //   this.projectsArray.push({
-      //     ...doc.data()
-      //   })
-      // })
     }
   }
 </script>
@@ -205,7 +186,8 @@ export default {
 
   }
   .v-icon.mdi-pencil, .v-icon.mdi-delete{
-    transition: 0.4s;
+    transition: 0.1s;
+    color: white;
   }
   .v-icon.mdi-pencil:hover{
     color: #12be6e;
@@ -214,4 +196,18 @@ export default {
     color: #e32;
   }
 
+.deleteProject{
+  transition: 0.1s;
+}
+.deleteProject:hover, .deleteProject:hover .v-icon.mdi-delete{
+  color: #e32;
+  background-color: transparent !important;
+}
+.modifyProject{
+  transition: 0.1s;
+}
+.modifyProject:hover, .modifyProject:hover .v-icon.mdi-pencil{
+  color: #12be6e;
+  background-color: transparent !important;
+}
 </style>
