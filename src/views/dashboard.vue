@@ -22,7 +22,7 @@
           <span>sort by person</span>
         </v-tooltip>
       </v-layout>
-      <v-card flat :class="`grey lighten-3 mb-1 border project ${project.status}`" v-for="project in projectsArray" :key="project.title" :id="project.id">
+      <v-card flat :class="`grey lighten-3 mb-1 border project ${project.status}`" v-for="(project, i) in projectsArray" :key="i" :id="project.id">
         <v-layout class="no-gutters pa-1" wrap row>
           <v-flex xs10 md4 class="primary--text">
             <div class="caption primary--text pa-1 font-weight-bold">Project Title</div>
@@ -46,12 +46,27 @@
           </v-flex>
           <v-flex xs6 sm4 md3 class="primary--text">
             <div class="caption primary--text pa-1 font-weight-bold">
+
+              <!-- ******************* -->
+              <!-- START DELETE BUTTON -->
+              <!-- ******************* -->
+
                 <button @click="deleteProject(project.id)" class="deleteProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default">
                   <v-icon left>mdi-delete</v-icon>
                   delete
                 </button>
-              <!-- dialog -->
-                  <v-dialog width="500" v-model="dialog" >
+              
+              <!-- ***************** -->
+              <!-- END DELETE BUTTON -->
+              <!-- ***************** -->
+
+<!-- ------------------------------------------------------------ -->
+
+              <!-- ***************** -->
+              <!-- START EDIT BUTTON -->
+              <!-- ***************** -->
+
+                  <v-dialog persistent :retain-focus="false" width="500" v-model="dialog" >
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn v-bind="attrs" v-on="on" text outlined class="grey modifyProject" dark @click="modifyProject(project.id)">
                               <v-icon left>mdi-pencil</v-icon>
@@ -60,13 +75,12 @@
                     </template>
                     <v-card>
                       <v-card-title class="text-h5 text-uppercase grey lighten-2">
-                        <div class="w-fit mx-auto">create a new project</div>
+                        <div class="w-fit mx-auto">edit project</div>
                       </v-card-title>
-
                       <v-card-text>
                           <v-form ref="form">
-                            <v-text-field label="project title" v-model="title" prepend-icon="mdi-folder"></v-text-field>
-                            <v-textarea label="project content" v-model="content" prepend-icon="mdi-pencil"></v-textarea>
+                            <v-text-field label="project title" :value="project.title" prepend-icon="mdi-folder"></v-text-field>
+                            <v-textarea label="project content" :value="project.content" prepend-icon="mdi-pencil"></v-textarea>
                               <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date" transition="scale-transition" offset-y  min-width="auto" >
                               <template v-slot:activator="{ on, attrs }">
                               <v-text-field v-model="date" label="project due date" prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" ></v-text-field>
@@ -79,16 +93,18 @@
                           </v-menu>   
                           </v-form>
                       </v-card-text>
-
                       <v-divider></v-divider>
-
                       <v-card-actions class="justify-start">
-                        <v-btn :loading='loading' class="grey lighten-2 text--darken-4" color="grey" outlined @click="submit()" >Add Project</v-btn>
+                        <v-btn :loading='loading' class="grey lighten-2 text--darken-4" color="grey" outlined @click="submit()" >Apply</v-btn>
+                        <v-btn class="grey lighten-2 text--darken-4" color="grey" outlined @click="cancel()" >Cancel</v-btn>
                       </v-card-actions>
                       
                     </v-card>
                   </v-dialog>
-              <!-- dialog -->
+
+              <!-- *************** -->
+              <!-- END EDIT BUTTON -->
+              <!-- *************** -->
               
             </div>
           </v-flex>
@@ -112,7 +128,8 @@ export default {
       due: null,
       date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       menu: false,
-      loading: false
+      loading: false,
+      
     }
   },
   methods:{
@@ -121,11 +138,17 @@ export default {
         a[prop] < b[prop] ? -1: 1)
     },
    async deleteProject(id){
-      await deleteDoc(doc(db, "Projects", id))
+     await deleteDoc(doc(db, "Projects", id))
       console.log(id + ' ---- was deleted -----');
     },
     modifyProject(id){
       console.log(id);
+    },
+    cancel(){
+      this.title = '',
+      this.content = '',
+      this.due = null,
+      this.dialog = false
     }
   },
   async created(){

@@ -1,7 +1,7 @@
 <template>
   <div id="popup">
       <div class="text-center my-5">
-    <v-dialog width="500" v-model="dialog" >
+    <v-dialog width="500" v-model="dialog" persistent>
       <template v-slot:activator="{ on, attrs }">
         <v-btn text outlined class="grey" dark v-bind="attrs" v-on="on" >create new project</v-btn>
       </template>
@@ -32,6 +32,7 @@
 
         <v-card-actions class="justify-start">
           <v-btn :loading='loading' class="grey lighten-2 text--darken-4" color="grey" outlined @click="submit()" >Add Project</v-btn>
+          <v-btn :loading='loading' class="grey lighten-2 text--darken-4" color="grey" outlined @click="dialog=false" >Cancel</v-btn>
         </v-card-actions>
         
       </v-card>
