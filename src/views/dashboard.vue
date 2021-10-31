@@ -24,14 +24,61 @@
       </v-layout>
       <v-card flat :class="`grey lighten-3 mb-1 border project ${project.status}`" v-for="(project, i) in projectsArray" :key="i" :id="project.id">
         <div class="edit-list">
+
+          <!-- Delete Button -->
           <button @click="deleteProject(project.id)" class="deleteProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default">
             <v-icon left>mdi-delete</v-icon>
             delete
           </button>
-          <v-btn dark @click.stop="dialog = true" class="modifyProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default">
-            <v-icon left>mdi-pencil</v-icon>
-            edit
-          </v-btn>
+
+
+          <!-- Edit Button -->
+          <v-dialog
+                v-model="dialog"
+                persistent
+                max-width="600"
+                
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    dark @click="modifyProject(project.id)"
+                    class="modifyProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default"
+                  >
+                    <v-icon left>mdi-pencil</v-icon>
+                      edit
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title class="text-h5">
+                    edit project #: {{project.id}}
+                  </v-card-title>
+                  <v-card-text>
+                    <v-text-field placeholder="project title">{{project.title}}</v-text-field>
+                    <v-text-field placeholder="project content">{{project.content}}</v-text-field>
+                    <v-text-field placeholder="project due date">{{project.due}}</v-text-field>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="grey lighten-3"
+                      class="green--text"
+                      @click="dialog = false"
+                    >
+                      Apply
+                    </v-btn>
+                    <v-btn
+                      color="grey lighten-3"
+                      class="red--text"
+                      @click="dialog = false"
+                    >
+                      Cancel
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+          </v-dialog>
+
         </div>
         <v-layout class="no-gutters pa-1" wrap row>
           <v-flex xs12 sm4 md3 class="px-2  primary--text">
@@ -59,56 +106,14 @@
               </div>
           </v-flex>
         </v-layout>
-      </v-card>
-
-<!-- -------------------------------------------- -->
-
-
-
-<!-- -------------------------------------------- -->
-
-
-          <!-- <v-flex xs6 sm4 md3 class="primary--text">
-            <div class="caption primary--text pa-1 font-weight-bold"> -->
-
-              <!-- ******************* -->
-              <!-- START DELETE BUTTON -->
-              <!-- ******************* -->
-
-                <!-- <button @click="deleteProject(project.id)" class="deleteProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default">
-                  <v-icon left>mdi-delete</v-icon>
-                  delete
-                </button> -->
-              
-              <!-- ***************** -->
-              <!-- END DELETE BUTTON -->
-              <!-- ***************** -->
-
-<!-- ------------------------------------------------------------ -->
-
-              <!-- ***************** -->
-              <!-- START EDIT BUTTON -->
-              <!-- ***************** -->
-
-    <!-- <v-btn dark @click.stop="dialog = true" class="modifyProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default">
-      <v-icon left>mdi-pencil</v-icon>
-      edit
-    </v-btn> -->
-            <!-- *************** -->
-            <!-- END EDIT BUTTON -->
-            <!-- *************** -->
- 
-            <!-- </div>
-          </v-flex> -->
-        <!-- </v-layout> -->
-      
+      </v-card>      
     </v-container>
   </div>
 </template>
 
 <script>
 import db from '../firebase'
-import { collection, query, onSnapshot, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 
 export default {
   data: ()=>{
@@ -116,7 +121,7 @@ export default {
       absolute: false,
       overlay: false,
       projectsArray: [],
-      dialog: true,
+      dialog: false,
       title: '',
       content: '',
       due: '',
@@ -125,7 +130,11 @@ export default {
       loading: false,
       updatedTitle: '',
       updatedContent: '',
-      updatedDue: ''
+      updatedDue: '',
+      newTitle: '',
+      newDue: '',
+      newContent: ''
+
     }
   },
   methods:{
@@ -138,14 +147,19 @@ export default {
       console.log(id + ' ---- was deleted -----');
     },
    async modifyProject(id){
-      // const selectedProject = doc(db, "Projects", id);
+      const selectedProject = doc(db, "Projects", id);
 
-      console.log(id);
-      // await updateDoc(selectedProject, {
-      //   title: 'new title',
-      //   content: 'new content',
-      //   due: '12-12-2012'
-      // });
+      await updateDoc(selectedProject, {
+          title : this.newTitle,
+          content : this.newContent,
+          due : this.newDue
+
+
+        // title: 'new title',
+        // content: 'new content',
+        // due: '12-12-2012'
+      });
+        console.log('project with ID: ' + id + ' was modified successfully!!');
     },
     cancel(){
       this.title = '',
@@ -155,7 +169,7 @@ export default {
     }
   },
   async created(){
-
+     
     const q = query(collection(db, "Projects"));
     onSnapshot(q, snapshot => {
       snapshot.docChanges().forEach(change => {
@@ -167,10 +181,14 @@ export default {
             // console.log("New project with id:", change.doc.data());
         }
         if (change.type === "modified") {
-            this.projectsArray.push({
-              ...change.doc.data()
-            })
-            console.log("modified project: ", typeof(change.doc.data()));
+          // function updateArray(newTitle, newContent, newDue){
+          //   this.title = newTitle
+          //   this.content = newContent
+          //   this.due = newDue
+          // }
+
+          const updated = query(collection(db, "Projects"))
+          console.log("modified project: ", updated);
         }
         if (change.type === "removed") {
           let target = document.getElementById(change.doc.id);
