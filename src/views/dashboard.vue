@@ -22,91 +22,69 @@
           <span>sort by person</span>
         </v-tooltip>
       </v-layout>
-      <v-card flat :class="`grey lighten-3 mb-1 border project ${project.status}`" v-for="(project, i) in projectsArray" :key="i" :id="project.id">
-        <div class="edit-list">
+<v-card flat :class="'grey lighten-3 mb-1 border project ' + project.status" v-for="(project, i) in projectsArray" :key="i" :id="project.id">
+  <div class="edit-list">
 
-          <!-- Delete Button -->
-          <button @click="deleteProject(project.id)" class="deleteProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default">
-            <v-icon left>mdi-delete</v-icon>
-            delete
-          </button>
+    
+    <button @click="deleteProject(project.id)" class="deleteProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default">
+      <v-icon left>mdi-delete</v-icon>
+      delete
+    </button>
 
-
-          <!-- Edit Button -->
-          <v-dialog
-                v-model="dialog"
-                persistent
-                max-width="600"
-                
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    v-bind="attrs"
-                    v-on="on"
-                    dark @click="modifyProject(project.id)"
-                    class="modifyProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default"
-                  >
-                    <v-icon left>mdi-pencil</v-icon>
-                      edit
-                  </v-btn>
-                </template>
-                <v-card>
-                  <v-card-title class="text-h5">
-                    edit project #: {{project.id}}
-                  </v-card-title>
-                  <v-card-text>
-                    <v-text-field placeholder="project title">{{project.title}}</v-text-field>
-                    <v-text-field placeholder="project content">{{project.content}}</v-text-field>
-                    <v-text-field placeholder="project due date">{{project.due}}</v-text-field>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="grey lighten-3"
-                      class="green--text"
-                      @click="dialog = false"
-                    >
-                      Apply
-                    </v-btn>
-                    <v-btn
-                      color="grey lighten-3"
-                      class="red--text"
-                      @click="dialog = false"
-                    >
-                      Cancel
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-          </v-dialog>
-
+    
+    <v-dialog v-model="dialog" persistent max-width="600" >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on" dark
+              class="modifyProject small mx-1 grey v-btn v-btn--outlined v-btn--text theme--dark v-size--default" >
+              <v-icon left>mdi-pencil</v-icon>
+                edit
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="text-h5">
+              edit project #: {{project.id}}
+            </v-card-title>
+            <v-card-text>
+              <v-text-field v-model="newTitle" placeholder="project title">{{project.title}}</v-text-field>
+              <v-text-field v-model="newContent" placeholder="project content">{{project.content}}</v-text-field>
+              <v-text-field v-model="newDue" placeholder="project due date">{{project.due}}</v-text-field>
+              new title: {{newTitle}}
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="grey lighten-3" class="green--text" @click="modifyProject(project.id)" > Apply </v-btn>
+              <v-btn color="grey lighten-3" class="red--text" @click="dialog = false" > Cancel </v-btn>
+            </v-card-actions>
+          </v-card>
+    </v-dialog>
+  </div>
+  <v-layout class="no-gutters pa-1" wrap row>
+    <v-flex xs12 sm4 md3 class="px-2  primary--text">
+      <div class="caption primary--text pa-1 font-weight-bold">Project Title</div>
+      <div class="black--text">{{ project.title }}</div>
+      <div class="red--text caption">ID: {{ project.id }}</div>
+    </v-flex>
+    <v-flex xs12 sm8 md3 class="px-2  primary--text">
+      <div class="caption primary--text pa-1 font-weight-bold">Project content</div>
+      <div class="black--text">{{ project.content }}</div>
+    </v-flex>
+    <v-flex xs12 sm4 md2 class="px-2  primary--text">
+      <div class="caption primary--text pa-1 font-weight-bold">Person</div>
+      <div class="black--text">{{ project.person }}</div>
+    </v-flex>
+    <v-flex xs12 sm4 md2 class="px-2  primary--text">
+      <div class="caption primary--text pa-1 font-weight-bold">Due date</div>
+      <div class="black--text">{{ project.due }}</div>
+    </v-flex>
+    <v-flex xs12 sm4 md2 class="px-md-2 primary--text">
+        <div class="caption primary--text pa-1 font-weight-bold">Project status
+          <v-chip small :class="project.status+ ' dark--text caption mt-4 px-3 mr-5'">
+              {{project.status}}
+          </v-chip>
         </div>
-        <v-layout class="no-gutters pa-1" wrap row>
-          <v-flex xs12 sm4 md3 class="px-2  primary--text">
-            <div class="caption primary--text pa-1 font-weight-bold">Project Title</div>
-            <div class="black--text">{{ project.title }}</div>
-            <div class="red--text caption">ID: {{ project.id }}</div>
-          </v-flex>
-          <v-flex xs12 sm8 md3 class="px-2  primary--text">
-            <div class="caption primary--text pa-1 font-weight-bold">Project content</div>
-            <div class="black--text">{{ project.content }}</div>
-          </v-flex>
-          <v-flex xs12 sm4 md2 class="px-2  primary--text">
-            <div class="caption primary--text pa-1 font-weight-bold">Person</div>
-            <div class="black--text">{{ project.person }}</div>
-          </v-flex>
-          <v-flex xs12 sm4 md2 class="px-2  primary--text">
-            <div class="caption primary--text pa-1 font-weight-bold">Due date</div>
-            <div class="black--text">{{ project.due }}</div>
-          </v-flex>
-          <v-flex xs12 sm4 md2 class="px-md-2 primary--text">
-              <div class="caption primary--text pa-1 font-weight-bold">Project status
-                <v-chip small :class="`${project.status} dark--text caption mt-4 px-3 mr-5`">
-                    {{project.status}}
-                </v-chip>
-              </div>
-          </v-flex>
-        </v-layout>
-      </v-card>      
+    </v-flex>
+  </v-layout>
+</v-card>      
     </v-container>
   </div>
 </template>
@@ -155,10 +133,8 @@ export default {
           due : this.newDue
 
 
-        // title: 'new title',
-        // content: 'new content',
-        // due: '12-12-2012'
       });
+      this.dialog = false
         console.log('project with ID: ' + id + ' was modified successfully!!');
     },
     cancel(){
@@ -173,25 +149,24 @@ export default {
     const q = query(collection(db, "Projects"));
     onSnapshot(q, snapshot => {
       snapshot.docChanges().forEach(change => {
+        let target = document.getElementById(change.doc.id);
         if (change.type === "added") {
             this.projectsArray.push({
               ...change.doc.data(),
               id: change.doc.id
             })
-            // console.log("New project with id:", change.doc.data());
+            console.log("New project with id:", change.doc.data());
         }
         if (change.type === "modified") {
-          // function updateArray(newTitle, newContent, newDue){
-          //   this.title = newTitle
-          //   this.content = newContent
-          //   this.due = newDue
-          // }
+            change.doc.data().title = this.newTitle
+            change.doc.data().content = this.newContent
+            change.doc.data().due = this.newDue
+            console.log(change.doc.data().title);
 
           const updated = query(collection(db, "Projects"))
           console.log("modified project: ", updated);
         }
         if (change.type === "removed") {
-          let target = document.getElementById(change.doc.id);
           target.parentElement.removeChild(target);
         }
       });
