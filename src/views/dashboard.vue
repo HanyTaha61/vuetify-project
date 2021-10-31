@@ -132,7 +132,6 @@ export default {
           content : this.newContent,
           due : this.newDue
 
-
       });
       this.dialog = false
         console.log('project with ID: ' + id + ' was modified successfully!!');
