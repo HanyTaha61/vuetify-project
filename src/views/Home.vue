@@ -1,11 +1,17 @@
 <template>
   <div class="home">
-    <h1>Home</h1>
+    <v-container>
+      <h1>Home</h1>
+    </v-container>
   </div>
 </template>
 
 <script>
 export default {
-  
+    data(){
+      return{
+        
+      }
+    }
   }
 </script>

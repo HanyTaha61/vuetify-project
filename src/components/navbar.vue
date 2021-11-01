@@ -82,7 +82,6 @@ export default {
             drawer: false,
             links:[
                 { text: 'home', icon: 'mdi-home', route: '/' },
-                { text: 'dashboard', icon: 'mdi-clock', route: '/dashboard' },
                 { text: 'My projects', icon: 'mdi-account', route: '/projects' },
                 { text: 'team', icon: 'mdi-flag', route: '/team' },
             ],
