@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Projects from '../views/projects.vue'
 import Dashboard from '../views/dashboard.vue'
 import Team from '../views/team.vue'
-import Home from '../views/home'
+import Home from '../views/home.vue'
 
 Vue.use(VueRouter)
 
